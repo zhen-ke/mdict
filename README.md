@@ -1,70 +1,34 @@
-# Getting Started with Create React App
+# mdictApp
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 项目说明
 
-## Available Scripts
+mdictApp 是一个基于 tauri 框架开发的跨平台软件，支持 mdict (_.mdx/_.mdd) 词典格式
 
-In the project directory, you can run:
+### 项目截图
 
-### `npm start`
+![screenshot1](./screenshot/mdictApp_02.png)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 环境搭建
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+[Windows](https://tauri.studio/v1/guides/getting-started/prerequisites/#setting-up-windows)
 
-### `npm test`
+[MacOs](https://tauri.studio/v1/guides/getting-started/prerequisites/#setting-up-macos)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 构建应用
 
-### `npm run build`
+```bash
+# 安装依赖
+npm install
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# 开发模式
+npm run tauri dev
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# 打包项目
+npm run tauri build
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 赞助我
 
-### `npm run eject`
+如果觉得这些内容不错，请我喝杯咖啡吧。
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![pay](./screenshot/pay.png)
