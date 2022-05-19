@@ -1,0 +1,49 @@
+.mdictApp {
+  .mdictHeader {
+    height: 50px;
+    background: #d74e48;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .search {
+      border-radius: 30px;
+      border: 0;
+      background: #dd6763;
+      color: #fff;
+      padding: 5px 10px;
+      font-size: 12px;
+      &:focus {
+        outline: 0;
+      }
+    }
+  }
+  .mdictBody {
+    display: flex;
+    height: calc(100vh - 50px);
+    .searchList {
+      background: #ededed;
+      overflow: auto;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      width: 200px;
+      li {
+        padding: 10px;
+        border-bottom: 1px solid #e1e1e1;
+        color: #333;
+        cursor: pointer;
+        white-space: nowrap;
+        &:hover {
+          background: #e2e2e2;
+          color: #d74e48;
+        }
+      }
+    }
+    .mdictContent {
+      width: calc(100vw - 200px);
+      overflow: auto;
+      padding: 20px 30px;
+    }
+  }
+}

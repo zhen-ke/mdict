@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useRef } from "react";
 import debounce from "lodash/debounce";
 
-import "./App.css";
+import styles from "./App.module.scss";
 
 function App() {
   const [keyword, setKeyword] = useState("");
   const [content, setContent] = useState("");
+  const [searchList, setSearchList] = useState([]);
   const mdictRef = useRef(null);
 
   const getMdictMethods = (deps) => {
@@ -35,12 +36,24 @@ function App() {
     }
   };
 
-  const handleDebounceSearch = async (keyword) => {
-    const content = await mdictRef.current.lookup(keyword);
-    setContent(content.html());
+  const handleDebounceSearch = async (keywords) => {
+    const searchRes = await mdictRef.current.search({
+      phrase: keywords,
+      max: 50,
+    });
+    const searchResList = searchRes.map((v) => ({
+      word: v.toString(),
+      value: v.offset,
+    }));
+    setSearchList(searchResList);
   };
 
   const debounceFn = useCallback(debounce(handleDebounceSearch, 300), []);
+
+  const handleSearchItem = async (word) => {
+    const content = await mdictRef.current.lookup(word);
+    setContent(content.html());
+  };
 
   const keywordChange = (e) => {
     const keywordVal = e?.target?.value || "";
@@ -49,24 +62,43 @@ function App() {
   };
 
   return (
-    <div className='App'>
-      <input
-        id='dictfile'
-        type='file'
-        multiple
-        onChange={async (e) => {
-          const mdict = await initMdict(e.target.files);
-          mdictRef.current = mdict;
-        }}
-      />
-      <input
-        id='keyword'
-        type='text'
-        value={keyword}
-        onChange={keywordChange}
-      />
-      <input id='btnLookup' type='button' value='look up' disabled='false' />
-      <div id='definition' dangerouslySetInnerHTML={{ __html: content }} />
+    <div className={styles.mdictApp}>
+      <div className={styles.mdictHeader}>
+        <input
+          className={styles.search}
+          type='text'
+          value={keyword}
+          placeholder='搜索'
+          onChange={keywordChange}
+        />
+        <input
+          id='dictfile'
+          type='file'
+          multiple
+          placeholder='选择词典'
+          onChange={async (e) => {
+            const mdict = await initMdict(e.target.files);
+            mdictRef.current = mdict;
+          }}
+        />
+      </div>
+      <div className={styles.mdictBody}>
+        <ul className={styles.searchList}>
+          {searchList.map((it) => (
+            <li
+              key={it.value}
+              data-offset={it.value}
+              onClick={() => handleSearchItem(it.word)}
+            >
+              {it.word}
+            </li>
+          ))}
+        </ul>
+        <div
+          className={styles.mdictContent}
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
+      </div>
     </div>
   );
 }
