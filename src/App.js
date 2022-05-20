@@ -42,10 +42,13 @@ function App() {
       phrase: keywords,
       max: 50,
     });
-    const searchResList = searchRes.map((v) => ({
-      word: v.toString(),
-      value: v.offset,
-    }));
+
+    const searchResList = searchRes
+      .filter((it) => !/\_|\-/g.test(it))
+      .map((v) => ({
+        word: v.toString(),
+        value: v.offset,
+      }));
     setSearchList(searchResList);
   };
 
