@@ -50,6 +50,7 @@ function App() {
         value: v.offset,
       }));
     setSearchList(searchResList);
+    handleSearchItem(searchResList[0].word);
   };
 
   const debounceFn = useCallback(debounce(handleDebounceSearch, 300), []);
@@ -62,6 +63,11 @@ function App() {
   const keywordChange = (e) => {
     const keywordVal = e?.target?.value || "";
     setKeyword(keywordVal);
+    if (!keywordVal.length) {
+      setContent("");
+      setSearchList([]);
+      return;
+    }
     debounceFn(keywordVal);
   };
 
