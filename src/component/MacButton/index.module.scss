@@ -1,0 +1,36 @@
+.btn {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  &:after,
+  &:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 100%;
+    opacity: 0;
+    transition: all 0.3 ease-in-out;
+  }
+  &.close-btn {
+    background: #ff5d5b;
+    border: 1px solid #cf544d;
+    &:before,
+    &:after {
+      width: 2px;
+      height: px;
+      background: #460100;
+    }
+  }
+  &.min-btn {
+    background: #ffbb39;
+    border: 1px solid #cfa64e;
+  }
+  &.max-btn {
+    background: #00cd4e;
+    border: 1px solid #0ea642;
+  }
+}
