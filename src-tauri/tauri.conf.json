@@ -67,10 +67,11 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 700,
+        "height": 680,
         "resizable": false,
         "title": "mdict",
-        "width": 1000
+        "width": 1000,
+        "decorations": false
       }
     ]
   }
