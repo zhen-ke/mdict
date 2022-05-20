@@ -1,11 +1,20 @@
 .mdictApp {
+  .topRightbButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 10px;
+    left: 8px;
+    width: 52px;
+  }
   .mdictHeader {
     height: 50px;
     background: #d74e48;
     padding: 0 30px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    flex-direction: row-reverse;
     .search {
       border-radius: 30px;
       border: 0;

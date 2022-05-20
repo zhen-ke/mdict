@@ -1,6 +1,7 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import MacButton from "./component/MacButton";
 import debounce from "lodash/debounce";
-
+import { appWindow } from "@tauri-apps/api/window";
 import styles from "./App.module.scss";
 
 function App() {
@@ -63,7 +64,15 @@ function App() {
 
   return (
     <div className={styles.mdictApp}>
-      <div className={styles.mdictHeader}>
+      <div className={styles.topRightbButton}>
+        <MacButton type={"close-btn"} onClick={() => appWindow.close()} />
+        <MacButton type={"min-btn"} onClick={() => appWindow.minimize()} />
+        <MacButton
+          type={"max-btn"}
+          onClick={() => appWindow.toggleMaximize()}
+        />
+      </div>
+      <div className={styles.mdictHeader} data-tauri-drag-region>
         <input
           className={styles.search}
           type='text'
