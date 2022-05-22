@@ -1,7 +1,9 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import MacButton from "./component/MacButton";
 import debounce from "lodash/debounce";
 import { appWindow } from "@tauri-apps/api/window";
+import dictionary from "./common/mdictModule";
+
 import styles from "./App.module.scss";
 
 function App() {
@@ -24,16 +26,10 @@ function App() {
 
   const initMdict = async (fileList) => {
     try {
-      const [mParser, mRenderer] = await getMdictMethods([
-        "mdictParser",
-        "mdictRenderer",
-      ]);
-      const resources = await mParser(fileList);
-      const mdictRes = await mRenderer(resources);
-
+      const mdictRes = await dictionary(fileList);
       return mdictRes;
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -57,7 +53,7 @@ function App() {
 
   const handleSearchItem = async (word) => {
     const content = await mdictRef.current.lookup(word);
-    setContent(content.html());
+    setContent(content[0]);
   };
 
   const keywordChange = (e) => {

@@ -12,7 +12,12 @@
     "react-dom": "^18.1.0",
     "react-helmet": "^6.1.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "bluebird": "2.9.32",
+    "buffer-dataview": "0.0.2",
+    "pako": "^1.0.4",
+    "text-encoding": "^0.6.4",
+    "xmldom": "^0.1.27"
   },
   "scripts": {
     "start": "cross-env BROWSER=none react-scripts start",
