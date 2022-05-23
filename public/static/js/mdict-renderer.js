@@ -57,20 +57,21 @@
   return function createRenderer(resources) {
     var cache = (function createCache(mdd) {
       var repo = {};
-
       function get(id, load) {
         var entry = repo[id];
         if (!entry) {
-          repo[id] = entry = new Promise(function (resolve) {
+          repo[id] = entry = new Promise(function (resolve, reject) {
             var will = mdd
               .then(function (lookup) {
-                // console.log('lookup: ' + id);
+                console.log("lookup: " + id);
                 return lookup(id);
               })
               .then(load)
               .then(function (url) {
+                console.log("url: " + url);
                 resolve(url);
-              });
+              })
+              .catch((e) => reject(e));
           });
         }
         return entry;
@@ -130,6 +131,50 @@
       return false;
     }
 
+    function replaceAll(str, find, replace) {
+      return str.replace(new RegExp(find, "g"), replace);
+    }
+
+    async function extractKeys(html) {
+      const CSS_REG = /href=\"((\S+)\.css)\"/g;
+      const CSS_REG_IDX = 1;
+      let matches = html.matchAll(CSS_REG);
+      const keySet = new Set();
+
+      for (const match of matches) {
+        let resourceKey = match[CSS_REG_IDX];
+        keySet.add(resourceKey);
+      }
+
+      try {
+        const mddHerf = await Promise.all(
+          [...keySet].map((currentUrl) => {
+            return cache
+              .get(currentUrl, loadData.bind(null, MIME["css"]))
+              .then((originUrl) => {
+                return {
+                  currentUrl,
+                  originUrl,
+                };
+              })
+              .catch((error) => {
+                console.error(error);
+                return {
+                  currentUrl: "#",
+                  originUrl: "#",
+                };
+              });
+          })
+        );
+        mddHerf.map(
+          (it) => (html = replaceAll(html, it.currentUrl, it.originUrl))
+        );
+        return html;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
     function replaceCss(index, link) {
       var $link = $(link);
       var href = $link.attr("href");
@@ -138,9 +183,10 @@
         // TODO: Limit scope of embedded styles provide by mdd file
         // TODO: use shadow dom for Chrome
         // TODO: use scoped style for Firefox
-        $link.replaceWith(
-          $("<style scoped>", { src_: href }).text('@import url("' + url + '")')
-        );
+        // $link.replaceWith(
+        //   $("<style scoped>", { src_: href }).text('@import url("' + url + '")')
+        // );
+        $link.attr("href", url);
       });
     }
 
@@ -179,19 +225,16 @@
       return new Blob([Speex.util.str2ab(waveData)], { type: "audio/wav" });
     }
 
-    function render($content) {
+    async function render($content) {
       if (resources["mdd"]) {
-        $content.find("img[src]").each(replaceImage);
+        return await extractKeys($content);
+        // $content.find("img[src]").each(replaceImage);
 
-        $content.find("link[rel=stylesheet]").each(replaceCss);
+        // $content.find("link[rel=stylesheet]").each(replaceCss);
 
-        $content.find("script[src]").each(injectJS);
+        // $content.find("script[src]").each(injectJS);
 
-        $content.find('a[href^="sound://"]').on("click", renderAudio);
-
-        setTimeout(function () {
-          $("#definition *").trigger("resize");
-        });
+        // $content.find('a[href^="sound://"]').on("click", renderAudio);
       }
 
       // resolve entry:// link dynamically in mdict.js
@@ -202,8 +245,6 @@
       //          $el.attr('href', href.substring(8));
       //        }
       //      });
-
-      return $content;
     }
 
     return {
@@ -217,7 +258,7 @@
             var html = definitions.reduce(function (prev, txt) {
               return prev + "<p></p>" + txt;
             }, "<p>" + definitions.length + " entry(ies) </p>");
-            return Promise.resolve(render($("<div>").html(html)));
+            return Promise.resolve(render(html));
           });
       },
 

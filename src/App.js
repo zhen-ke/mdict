@@ -57,7 +57,7 @@ function App() {
 
   const handleSearchItem = async (word) => {
     const content = await mdictRef.current.lookup(word);
-    setContent(content.html());
+    setContent(content);
   };
 
   const keywordChange = (e) => {
