@@ -81,6 +81,8 @@
     })(resources["mdd"]);
 
     function loadData(mime, data) {
+      // const test = String.fromCharCode.apply(null, data);
+      // console.log(test);
       var blob = new Blob([data], { type: mime });
       return URL.createObjectURL(blob);
     }
@@ -135,20 +137,27 @@
       return str.replace(new RegExp(find, "g"), replace);
     }
 
-    async function extractKeys(html) {
-      const CSS_REG = /href=\"((\S+)\.css)\"/g;
-      const CSS_REG_IDX = 1;
-      let matches = html.matchAll(CSS_REG);
+    const JS_REG = /src=\"((\S+)\.js)\"/gi;
+    const JS_REG_IDX = 1;
+    const CSS_REG = /href=\"((\S+)\.css)\"/g;
+    const CSS_REG_IDX = 1;
+
+    function extractKeys(html, reg, idx) {
+      let matches = html.matchAll(reg);
       const keySet = new Set();
 
       for (const match of matches) {
-        let resourceKey = match[CSS_REG_IDX];
+        let resourceKey = match[idx];
         keySet.add(resourceKey);
       }
+      return [...keySet];
+    }
 
+    async function replaceCss(html) {
       try {
+        const resourceKeys = extractKeys(html, CSS_REG, CSS_REG_IDX);
         const mddHerf = await Promise.all(
-          [...keySet].map((currentUrl) => {
+          resourceKeys.map((currentUrl) => {
             return cache
               .get(currentUrl, loadData.bind(null, MIME["css"]))
               .then((originUrl) => {
@@ -175,28 +184,42 @@
       }
     }
 
-    function replaceCss(index, link) {
-      var $link = $(link);
-      var href = $link.attr("href");
-      cache.get(href, loadData.bind(null, MIME["css"])).then(function (url) {
-        // $link.attr({href: url, href_: href});
-        // TODO: Limit scope of embedded styles provide by mdd file
-        // TODO: use shadow dom for Chrome
-        // TODO: use scoped style for Firefox
-        // $link.replaceWith(
-        //   $("<style scoped>", { src_: href }).text('@import url("' + url + '")')
-        // );
-        $link.attr("href", url);
-      });
-    }
-
-    function injectJS(index, el) {
-      var $el = $(el);
-      var src = $el.attr("src");
-      cache.get(src, loadData.bind(null, MIME["js"])).then(function (url) {
-        $el.remove();
-        $.ajax({ url: url, dataType: "script", cache: true });
-      });
+    async function injectJS(html) {
+      // var $el = $(el);
+      // var src = $el.attr("src");
+      // cache.get(src, loadData.bind(null, MIME["js"])).then(function (url) {
+      //   $el.remove();
+      //   $.ajax({ url: url, dataType: "script", cache: true });
+      // });
+      try {
+        const resourceKeys = extractKeys(html, JS_REG, JS_REG_IDX);
+        const mddHerf = await Promise.all(
+          resourceKeys.map((currentUrl) => {
+            return cache
+              .get(currentUrl, loadData.bind(null, MIME["js"]))
+              .then((originUrl) => {
+                return {
+                  currentUrl,
+                  originUrl,
+                };
+              })
+              .catch((error) => {
+                console.error(error);
+                return {
+                  currentUrl: "#",
+                  originUrl: "#",
+                };
+              });
+          })
+        );
+        mddHerf.map(
+          (it) => (html = replaceAll(html, it.currentUrl, it.originUrl))
+        );
+        console.log(mddHerf);
+        return html;
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     function decodeSpeex(file) {
@@ -227,7 +250,8 @@
 
     async function render($content) {
       if (resources["mdd"]) {
-        return await extractKeys($content);
+        const res = await injectJS($content);
+        return await replaceCss(res);
         // $content.find("img[src]").each(replaceImage);
 
         // $content.find("link[rel=stylesheet]").each(replaceCss);
@@ -236,7 +260,7 @@
 
         // $content.find('a[href^="sound://"]').on("click", renderAudio);
       }
-
+      return $content;
       // resolve entry:// link dynamically in mdict.js
       //      // rewrite in-page link
       //      $content.find('a[href^="entry://"]').each(function() {
@@ -255,9 +279,7 @@
           })
           .then(function (definitions) {
             console.log("lookup done!");
-            var html = definitions.reduce(function (prev, txt) {
-              return prev + "<p></p>" + txt;
-            }, "<p>" + definitions.length + " entry(ies) </p>");
+            var html = definitions.reduce((prev, txt) => prev + txt, "");
             return Promise.resolve(render(html));
           });
       },
