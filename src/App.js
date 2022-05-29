@@ -12,18 +12,6 @@ function App() {
   const [searchList, setSearchList] = useState([]);
   const mdictRef = useRef(null);
 
-  const getMdictMethods = (deps) => {
-    return new Promise((resolve, reject) => {
-      try {
-        window.requirejs([...deps], (...arg) => {
-          resolve(arg);
-        });
-      } catch (error) {
-        reject(error);
-      }
-    });
-  };
-
   const initMdict = async (fileList) => {
     try {
       const mdictRes = await dictionary(fileList);
