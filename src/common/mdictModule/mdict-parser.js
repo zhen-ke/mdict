@@ -1167,14 +1167,14 @@ function parse_mdict(file, ext) {
  * Load a set of files which will be parsed as MDict dictionary & resource (mdx/mdd).
  */
 const load = function (files) {
-  var resources = [];
+  const resources = {};
   Array.prototype.forEach.call(files, function (f) {
     var ext = getExtension(f.name, "mdx");
 
-    resources.push((resources[ext] = parse_mdict(f, ext)));
+    resources[ext] = parse_mdict(f, ext);
   });
 
-  return Promise.all(resources).then(function () {
+  return Promise.all(Object.values(resources)).then(function () {
     return resolve(resources);
   });
 };
